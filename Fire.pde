@@ -53,22 +53,22 @@ class Fire extends Routine {
     angle = angle + 0.05;
 
 //    // Rotating wireframe cube
-//    pg.beginDraw();
-//    pg.translate(width >> 1, height >> 1);
-//    pg.rotateX(sin(angle/2));
-//    pg.rotateY(cos(angle/2));
-//    pg.background(0);
-//    pg.stroke(128);
-//    pg.scale(25);
-//    pg.noFill();
-//    pg.box(4);
-//    pg.endDraw();
+    pg.beginDraw();
+    pg.translate(width >> 1, height >> 1);
+    pg.rotateX(sin(angle/4));
+    pg.rotateY(cos(angle/4));
+    pg.background(0);
+    pg.stroke(128);
+    pg.scale(25);
+    pg.noFill();
+    pg.box(4);
+    pg.endDraw();
 
     // Randomize the bottom row of the fire buffer
-    for (int x = 0; x < width; x++)
-    {
-      fire[x][height-1] = int(random(0, 190)) ;
-    }
+//    for (int x = 0; x < width; x++)
+//    {
+//      fire[x][height-1] = int(random(0, 190)) ;
+//    }
 
     loadPixels();
 
@@ -96,6 +96,10 @@ class Fire extends Routine {
       }
     }
     updatePixels();
+    
+    if (frameCount - modeFrameStart > FRAMERATE*TYPICAL_MODE_TIME) {
+      newMode();
+    }
   }
 }
 

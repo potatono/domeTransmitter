@@ -60,10 +60,17 @@ class Warp extends Routine {
     else {
       background(0);
       noFill();
+      strokeWeight(2);
       ellipseMode(RADIUS);
+      colorMode(RGB);
       for (int i=0; i<10; i++) {
-        stroke(i%2==0 ? color(255,64,64) : color(255,128,0));
+        stroke(i%2==0 ? color(128,48,48) : color(128,64,0));
+//        stroke(color(128,64,0));
         ellipse(width/2,height/2,i*(width/10),i*(height/10));  
+      }
+      
+      if (frameCount - modeFrameStart > FRAMERATE*TYPICAL_MODE_TIME) {
+        newMode();
       }
     }
   }

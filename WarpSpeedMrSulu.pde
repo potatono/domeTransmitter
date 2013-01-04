@@ -12,7 +12,6 @@ class WarpSpeedMrSulu extends Routine {
   
   void draw() {
     background(0);
-    stroke(255);
     
     for (int i=0; i<NUM_STARS; i++) {
       warpstars[i].draw();

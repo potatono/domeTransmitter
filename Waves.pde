@@ -54,7 +54,7 @@ class Wave {
     f = PI/32 + random(PI/32);
     a = HEIGHT/3 + random(HEIGHT/3);
     y = HEIGHT/8 + int(random(HEIGHT - HEIGHT/8));
-    s = PI/128 + random(PI/64);
+    s = PI/256 + random(PI/128);
 
     if (random(10)<5) { 
       s = -s;

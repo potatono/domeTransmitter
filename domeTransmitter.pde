@@ -14,20 +14,21 @@ int HEIGHT = 160;
 boolean VERTICAL = false;
 int FRAMERATE = 40;
 String hostname = "127.0.0.1"; //"192.168.1.130";
-int TYPICAL_MODE_TIME = 300;
+int TYPICAL_MODE_TIME = 60*3;
 Routine drop = new DropTheBomb();
 Routine pong = new Pong();
 
 Routine[] enabledRoutines = new Routine[] {
+  //new TestCrawl(),/*
+  new Waves(),
   new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5), 
-  new Warp(null, true, false, 0.5, 0.5), 
+  new Warp(null, true, false, 0.5, 0.2), 
   new Bursts(),
   new Chase(), 
   new Fire(), 
-  //  new NightSky(),
+  //new NightSky(),
   new RGBRoutine(), 
-  new RainbowColors(), 
-  new Waves(),
+  //new RainbowColors(), */
 };
 
 int w = 0;

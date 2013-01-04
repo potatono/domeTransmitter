@@ -45,7 +45,8 @@ public class Sculpture {
   int addressingMode;
   byte buffer[];
   int pixelsPerChannel;
-  float gammaValue = 2.5;
+  float gammaValue = 2;
+  float brightnessCoefficient = 1.0;
   boolean enableGammaCorrection = false;
   boolean isRGB = false;
 
@@ -168,6 +169,11 @@ public class Sculpture {
             g = (int)(Math.pow(g/256.0,this.gammaValue)*256);
             b = (int)(Math.pow(b/256.0,this.gammaValue)*256);
           }
+          
+          /* Intensity Divider */
+          r = int(r * brightnessCoefficient);
+          g = int(g * brightnessCoefficient);
+          b = int(b * brightnessCoefficient);
           
           buffer[(getAddress(x, y)*3)+1] = byte(r);
           buffer[(getAddress(x, y)*3)+2] = byte(g);

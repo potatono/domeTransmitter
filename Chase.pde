@@ -1,13 +1,19 @@
 class Chase extends Routine {
+  float speed = 5;
+  int intensity;
+  
   void draw() {
     background(0);
-    stroke(255);
   
     long frame = frameCount - modeFrameStart;
-    line(frame/3.0%width, 0, frame/3.0%width, height);
-    line((frame/3.0+1)%width, 0, ((frame/3.0+1))%width, height);
-    line((frame/3.0+2)%width, 0, ((frame/3.0+2))%width, height);
-    line((frame/3.0+3)%width, 0, ((frame/3.0+3))%width, height);
+
+    for (int i=0; i<10; i++) {
+      stroke(255 - (10-i)*25,128 - (5*i),128 - (5*i));
+      line((frame/speed+i)%width, 0, (frame/speed+i)%width, height);
+    }
+   // line((frame/speed+1)%width, 0, ((frame/speed+1))%width, height);
+   // line((frame/speed+2)%width, 0, ((frame/speed+2))%width, height);
+   // line((frame/speed+3)%width, 0, ((frame/speed+3))%width, height);
   
     if (frame > FRAMERATE*TYPICAL_MODE_TIME) {
       newMode();

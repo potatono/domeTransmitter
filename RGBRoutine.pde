@@ -16,5 +16,10 @@ class RGBRoutine extends Routine {
     }
     
     color_angle = (color_angle+1)%255;
+
+    if (frameCount - modeFrameStart > FRAMERATE*TYPICAL_MODE_TIME) {
+      newMode();
+    }
+
   }
 }

@@ -17,7 +17,7 @@ class DropTheBomb extends Routine {
   void reset() {
     bombX = random(width);
     bombY = 0;
-    flashBrightness = 255;    
+    flashBrightness = 128;    
     blastRadius = 0;
   }
   

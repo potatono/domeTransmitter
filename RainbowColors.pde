@@ -20,5 +20,9 @@ class RainbowColors extends Routine {
     }
     
     colorMode(RGB, 255);
+    
+    if (frameCount - modeFrameStart > FRAMERATE*TYPICAL_MODE_TIME) {
+      newMode();
+    }
   }
 }
