@@ -14,7 +14,7 @@ int displayHeight = 160;
 
 boolean VERTICAL = false;
 int FRAMERATE = 25;
-int TYPICAL_MODE_TIME = 300;
+int TYPICAL_MODE_TIME = 10;
 
 float bright = 1;  // Global brightness modifier
 
@@ -23,9 +23,20 @@ Routine pong = new Pong();
 Routine backupRoutine = null;
 
 Routine[] enabledRoutines = new Routine[] {
-//  new Warp()
-  new Mirror(new Swirl())
-  //new Toss()
+  new Animator("anim-nyancat",1,.5,0,0,0),
+
+  new Hearts(),
+  new Bounce(),
+new Mirror(new Swirl()),
+new Swirl(0.5,15),
+new Warp(null, true, false, 0.5, 0.5), 
+new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5), 
+new Bursts()
+  //new Mirror(new Swirl())
+  //new Swirl(0.5,15)
+  
+//  new Warp(new Swirl(), true, true, 0.5, 0.5)
+  //new Mirror(new Swirl())
  // new Crawl(),
 //  new Animator("anim-nyancat",1,.5,0,0,0),
 //  new Mirror(new Warp(new Swirl(0), false, true, 0.5, 0.9), width/2)
@@ -126,6 +137,7 @@ int seizure_count = 0;  // Only let seizure mode work for a short time.
 void draw() { 
   // ColorPicker allows controlling color with wiimote D-pad 
   colorPicker.update();
+  strokeWeight(1);
   
   if (!controller.buttonB) {
     switching_mode = false;

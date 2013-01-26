@@ -50,9 +50,9 @@ class Animator extends Routine {
     image(anim.update(),xNominal - width, yNominal - height);
     image(anim.update(),xNominal,         yNominal - height);
 
-    if (frame > FRAMERATE*TYPICAL_MODE_TIME) {
-      newMode();
-    }
+     if ((frameCount - modeFrameStart)*4 > FRAMERATE*TYPICAL_MODE_TIME) {
+        newMode();
+     } 
   }
 
 }

@@ -8,7 +8,15 @@ class Fire extends Routine {
   int[] calc1, calc2, calc3, calc4, calc5;
 
   PGraphics pg;
+  Routine subroutine = null;
 
+  public Fire() {
+  }
+  
+  public Fire(Routine subroutine) {
+    this.subroutine = subroutine;
+  }
+  
   void setup(PApplet parent) {
     super.setup(parent);
     //  size(640, 360, P2D);
@@ -49,34 +57,47 @@ class Fire extends Routine {
     }
     
     colorMode(RGB);
+    
+    if (this.subroutine != null)
+      this.subroutine.setup(parent);
   }
 
   void draw() {
-    angle = angle + 0.05;
+    if (this.subroutine != null) {
+      colorPicker.forceGray();
+      this.subroutine.draw();
+      loadPixels();
+      for (int i=0; i<pixels.length; i++) 
+        pg.pixels[i] = brightness(pixels[i]) >= 128 ? color(128) : color(0);
+      
+      
+      if (this.subroutine.isDone) { newMode(); }
+    }
+    else {
+      angle = angle + 0.05;
 
-//    // Rotating wireframe cube
-//    pg.beginDraw();
-//    pg.translate(displayWidth >> 1, displayHeight >> 1);
-//    pg.rotateX(sin(angle/2));
-//    pg.rotateY(cos(angle/2));
-//    pg.background(0);
-//    pg.stroke(128);
-//    pg.scale(25);
-//    pg.noFill();
-//    pg.box(4);
-//    pg.endDraw();
-
-    // Randomize the bottom row of the fire buffer
-    for (int x = 0; x < displayWidth; x++)
-    {
-      fire[x][displayHeight-1] = int(random(0, 190)) ;
+      // Rotating wireframe cube
+      pg.beginDraw();
+      pg.translate(displayWidth >> 1, displayHeight >> 1);
+      pg.rotateX(sin(angle/2));
+      pg.rotateY(cos(angle/2));
+      pg.background(0);
+      pg.stroke(128);
+      pg.scale(25);
+      pg.noFill();
+      pg.box(4);
+      pg.endDraw();
+      
+      if (frameCount - modeFrameStart > FRAMERATE*TYPICAL_MODE_TIME) {
+        newMode();
+      } 
     }
 
     loadPixels();
 
     int counter = 0;
     // Do the fire calculations for every pixel, from top to bottom
-    for (int y = 0; y < displayHeight; y++) {
+    for (int y = displayHeight-1; y >= 0; y--) {
       for (int x = 0; x < displayWidth; x++) {
         // Add pixel values around current pixel
 
@@ -91,12 +112,13 @@ class Fire extends Routine {
 
         // Extract the red value using right shift and bit mask 
         // equivalent of red(pg.pixels[x+y*w])
-        if ((pg.pixels[counter++] >> 16 & 0xFF) == 128) {
+        if ((pg.pixels[counter++] >> 16 & 0xFF) >= 128) {
           // Only map 3D cube 'lit' pixels onto fire array needed for next frame
           fire[x][y] = 128;
         }
       }
     }
+    
     updatePixels();
   }
 }
