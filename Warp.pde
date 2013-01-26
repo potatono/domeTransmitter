@@ -11,7 +11,7 @@ class Warp extends Routine {
     this.subroutine = null;
     warpHorizontal = false;
     warpVertical = true;
-    warpSpeed = 2;
+    warpSpeed = 1;
     warpFactor = 1;
   }
 
@@ -61,8 +61,9 @@ class Warp extends Routine {
       background(0);
       noFill();
       ellipseMode(RADIUS);
+      strokeWeight(2);
       for (int i=0; i<10; i++) {
-        stroke(i%2==0 ? color(255,64,64) : color(255,128,0));
+        stroke(i%2==0 ? colorPicker.primaryColor : colorPicker.secondaryColor);
         ellipse(displayWidth/2,displayHeight/2,i*(displayWidth/10),i*(displayHeight/10));  
       }
     }
@@ -77,7 +78,7 @@ class Warp extends Routine {
         vshift(x, int(sin(r)*(displayHeight*warpFactor)));
       }
 
-      rofs += 0.0314 * warpSpeed;
+      rofs += 0.0314 * (warpSpeed + (warpSpeed * controller.pitch/-90));
     }
 
     if (warpHorizontal) {
@@ -86,7 +87,7 @@ class Warp extends Routine {
         hshift(y, int(sin(r)*(displayWidth*warpFactor)));
       }
 
-      rofs += 0.0314 * warpSpeed;
+      rofs += 0.0314 * (warpSpeed + (warpSpeed * controller.roll/-90));
     }
   }
 }

@@ -37,6 +37,8 @@ class WiiController {
   float roll, pitch;
   float nRoll, nPitch;
   Acceleration acc;
+  Acceleration pacc;
+  Acceleration dacc;
   float x,y;
   float nX, nY;
   float pNx, pNy;
@@ -62,6 +64,8 @@ class WiiController {
 
 
     acc = new Acceleration();
+    pacc = new Acceleration();
+    dacc = new Acceleration();
     nAcc = new Acceleration();
     ir = new IRdata[4];
     
@@ -144,9 +148,18 @@ class WiiController {
   
   
   void acceleration(float theX, float theY, float theZ) {
+    pacc.x = acc.x;
+    pacc.y = acc.y;
+    pacc.z = acc.z;
+    
     acc.x = theX;
     acc.y = theY;
     acc.z = theZ;
+    
+    dacc.x = acc.x-pacc.x;
+    dacc.y = acc.y-pacc.y;
+    dacc.z = acc.z-pacc.z;
+    
     if(DEBUG) {
       println("acceleration  x:"+acc.x+" y:"+acc.y+"  z:"+acc.z);  
     }
@@ -251,34 +264,34 @@ class WiiController {
   void buttonUp(int theValue) {
     buttonUp = (theValue==1)  ? true:false;
     
-    if(buttonUp) {
-      bright = min(1,bright + .1);
-    }
+//    if(buttonUp) {
+//      bright = min(1,bright + .1);
+//    }
   }
 
   void buttonDown(int theValue) {
     buttonDown = (theValue==1) ? true:false;
 
-    if(buttonDown) {
-      bright = max(.1,bright - .1);
-    }
+//    if(buttonDown) {
+//      bright = max(.1,bright - .1);
+//    }
   }
   
   void buttonLeft(int theValue) {
     buttonLeft = (theValue==1)  ? true:false;
     
-    if (buttonLeft) {
-      frameRate(max(15,frameRate - 5));
-    }
+//    if (buttonLeft) {
+//      frameRate(max(15,frameRate - 5));
+//    }
   }
 
   void buttonRight(int theValue) {
     buttonRight = (theValue==1) ? true:false;
     
     // make faster
-    if (buttonRight) {
-      frameRate(min(150,frameRate + 5));
-    }
+//    if (buttonRight) {
+//      frameRate(min(150,frameRate + 5));
+//    }
   }
 
   void buttonHome(int theValue) {

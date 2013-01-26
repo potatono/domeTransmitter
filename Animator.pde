@@ -36,9 +36,14 @@ class Animator extends Routine {
   
     long frame = frameCount;
     
+    // Add support for wiimote
+    float xVelocity = m_xVelocity + (m_xVelocity * controller.pitch/-360.0);
+    
     // Draw four images, in case we are wrapping
-    float xNominal = (frame*m_xVelocity + m_xOffset)%width;
+    float xNominal = (frame*xVelocity + m_xOffset)%width;
     float yNominal = (frame*m_yVelocity + m_yOffset)%height;
+    
+
 
     image(anim.update(),xNominal,         yNominal);
     image(anim.update(),xNominal - width, yNominal);    

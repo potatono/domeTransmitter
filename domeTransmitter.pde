@@ -6,7 +6,7 @@ import java.io.*;
 // This should be 127.0.0.1, 58802
 String transmit_address = "127.0.0.1";
 int transmit_port       = 58082;
-
+ColorPicker colorPicker = new ColorPicker();
 
 // Display configuration
 int displayWidth = 40;
@@ -23,19 +23,24 @@ Routine pong = new Pong();
 Routine backupRoutine = null;
 
 Routine[] enabledRoutines = new Routine[] {
-  new Animator("anim-nyancat",1,.5,0,0,0),
-  new Bursts(), 
+//  new Warp()
+  new Mirror(new Swirl())
+  //new Toss()
+ // new Crawl(),
+//  new Animator("anim-nyancat",1,.5,0,0,0),
+//  new Mirror(new Warp(new Swirl(0), false, true, 0.5, 0.9), width/2)
+  //new Bursts(), 
   //  new Chase(),
-  new ColorDrop(), 
+  //new ColorDrop(), 
   //  new DropTheBomb(),
-  new FFTDemo(), 
+  //new FFTDemo(), 
   //  new Fire(),
   //  new Greetz(),
-  new RGBRoutine(), 
-  new RainbowColors(), 
-  new Warp(null, true, false, 0.5, 0.5), 
-  new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5), 
-  new Waves(),
+  //new RGBRoutine(), 
+  //new RainbowColors(), 
+  //new Warp(null, true, false, 0.5, 0.5), 
+//  new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5), 
+  //new Waves(),
 };
 
 int w = 0;
@@ -58,6 +63,7 @@ int fadeOutFrames = 0;
 int fadeInFrames = 0;
 
 WiiController controller;
+
 
 void setup() {
   size(displayWidth, displayHeight);
@@ -116,7 +122,11 @@ void newMode() {
 boolean switching_mode = false; // if true, we already switched modes, so don't do it again this frame (don't freeze the display if someone holds the b button)
 int seizure_count = 0;  // Only let seizure mode work for a short time.
 
-void draw() {
+
+void draw() { 
+  // ColorPicker allows controlling color with wiimote D-pad 
+  colorPicker.update();
+  
   if (!controller.buttonB) {
     switching_mode = false;
   }
