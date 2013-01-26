@@ -66,7 +66,10 @@ class Warp extends Routine {
         stroke(i%2==0 ? colorPicker.primaryColor : colorPicker.secondaryColor);
         ellipse(displayWidth/2,displayHeight/2,i*(displayWidth/10),i*(displayHeight/10));  
       }
-    }
+      
+      if (frameCount - modeFrameStart > FRAMERATE*TYPICAL_MODE_TIME) {
+        newMode();
+      }     }
   }
 
   void draw() {

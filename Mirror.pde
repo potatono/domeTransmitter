@@ -21,9 +21,9 @@ class Mirror extends Routine {
   void draw() {
     subroutine.draw();
     
-//    mirror(offset + int((controller.roll/-90.0) * (width/2)));
+    mirror(offset);
     
-     mirror(offset);
+    if (subroutine.isDone) { newMode(); }
   }
   
   void mirror(int ofs) {
