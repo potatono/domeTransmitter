@@ -7,9 +7,8 @@ import java.io.*;
 String transmit_address = "127.0.0.1";
 int transmit_port       = 58082;
 
-
 // Display configuration
-int displayWidth = 40;
+int displayWidth = 8;
 int displayHeight = 160;
 
 boolean VERTICAL = false;
@@ -22,7 +21,43 @@ Routine drop = new Seizure();
 Routine pong = new Pong();
 Routine backupRoutine = null;
 
+color[] palette = new color[] {
+  color(255,255,255),
+  color(170,11,5),
+  color(232,183,42),
+  color(75,166,0),
+  color(34,173,228),
+  color(136,8,103),
+  color(245,244,240),
+  color(130,21,14)
+};
+int currentColor = 0;
+color primaryColor = palette[0];
+color secondaryColor = palette[1];
+color tertiaryColor = palette[2];
+
+
 Routine[] enabledRoutines = new Routine[] {
+    new TestPattern(true)
+//  new Warp(new Chase(), true, false, 0.5, 0.25),
+//  new Chase(),
+//  new Warp(new TestPattern(false), true, true, 0.5, 0.5),
+//  new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5),
+//  new Bursts(),
+//  new ColorDrop(),  
+//  new Warp(), 
+//  new Warp(new Bursts(), true, true, 0.5, 0.5),
+//  new Warp(new TrialOfZod(), true, false, 0.5, 0.25),
+//  new Warp(new Waves(), false, true, 0.5, 0.5),
+//  new Chase(),
+//  new Warp(null, true, false, 0.5, 0.5), 
+//  new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5),
+//  new WarpSpeedMrSulu()
+//  
+ // new Waves(),
+  //new RainbowColors() 
+
+  /*
   new Animator("anim-nyancat",1,.5,0,0,0),
   new Bursts(), 
   //  new Chase(),
@@ -36,6 +71,7 @@ Routine[] enabledRoutines = new Routine[] {
   new Warp(null, true, false, 0.5, 0.5), 
   new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5), 
   new Waves(),
+  */
 };
 
 int w = 0;
@@ -58,9 +94,11 @@ int fadeOutFrames = 0;
 int fadeInFrames = 0;
 
 WiiController controller;
+boolean wasButtonUp = false;
 
 void setup() {
-  size(displayWidth, displayHeight);
+  //size(displayWidth, displayHeight);
+  size(800,600);
 
   frameRate(FRAMERATE);
 
@@ -80,7 +118,7 @@ void setup() {
 }
 
 void setFadeLayer(int g) {
-  fadeLayer = createGraphics(displayWidth, displayHeight, P2D);
+  fadeLayer = createGraphics(displayWidth, displayHeight);
   fadeLayer.beginDraw();
   fadeLayer.stroke(g);
   fadeLayer.fill(g);
@@ -163,6 +201,15 @@ void draw() {
       println("Current method is null");
     }
 
+    if (controller.buttonUp && !wasButtonUp) {
+      wasButtonUp = true;
+      println("New color");
+      cycleColors();
+    }
+    else if (!controller.buttonUp && wasButtonUp) {
+      wasButtonUp = false;
+    }
+
     if (fadeInFrames > 0) {
       setFadeLayer(240 - fadeInFrames * (240 / FRAMERATE));
       blend(fadeLayer, 0, 0, displayWidth, displayHeight, 0, 0, displayWidth, displayHeight, MULTIPLY);
@@ -176,5 +223,21 @@ void draw() {
   }
 
   sign.sendData();
+}
+
+color randomColor() {
+  return palette[int(random(palette.length))];
+}
+
+void cycleColors() {
+  currentColor++;
+  
+  if (currentColor >= palette.length)
+    currentColor = 0;
+    
+  primaryColor = palette[currentColor];
+  secondaryColor = palette[currentColor+1 < palette.length ? currentColor+1 : currentColor-palette.length+1];
+  tertiaryColor = palette[currentColor+2 < palette.length ? currentColor+2 : currentColor-palette.length+2];
+  
 }
 

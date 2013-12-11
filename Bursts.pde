@@ -49,17 +49,12 @@ class Burst {
 
   public void reset()
   {
-    r = random(128)+128;
-    g = random(128)+128;
-    b = random(128)+128;
-    //r = random(128);
-    //g = random(118);
-    //b = random(128);
-   
+    resetColor();
+    
     x = random(displayWidth);
     y = random(displayHeight);
 
-    float max_speed = 2;
+    float max_speed = 0.25;
     xv = random(max_speed) - max_speed/2;
     yv = random(max_speed) - max_speed/2;
     
@@ -68,6 +63,20 @@ class Burst {
     d = 0;
     intensity = 255;
   }
+  
+  public void resetColor()
+  {
+    color col;
+    float i = random(3);
+    
+    if (i<1) col = primaryColor;
+    else if (i<2) col = secondaryColor;
+    else col = tertiaryColor;
+     
+    r = red(col);
+    g = green(col);
+    b = blue(col);
+  }  
 
   public void init()
   {
@@ -87,7 +96,7 @@ class Burst {
   }
   
   public void draw()
-  {    
+  {
     // Draw multiple elipses, to handle wrapping in the y direction.
     draw_ellipse(x, y,       d*(.5-.3*y/displayHeight), d*3, color(r,g,b));
     draw_ellipse(x-displayWidth, y, d*(.5-.3*y/displayHeight), d*3, color(r,g,b));

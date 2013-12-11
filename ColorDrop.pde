@@ -19,19 +19,32 @@ class ColorDrop extends Routine {
       
       
       if((row+frame*frame_mult)%(3*displayHeight) < displayHeight) {
-        r = 255*phase;
-        g = 0;
-        b = 0;
+        r = red(primaryColor)* phase;
+        g = green(primaryColor) * phase;
+        b = blue(primaryColor) * phase;
+//        r = 255*phase;
+//        g = 0;
+//        b = 0;
       }
       else if((row+frame*frame_mult)%(3*displayHeight) < displayHeight*2) {
-        r = 0;
-        g = 255*phase;
-        b = 0;
+        r = red(secondaryColor)* phase;
+        g = green(secondaryColor) * phase;
+        b = blue(secondaryColor) * phase;
+
+
+//        r = 0;
+//        g = 255*phase;
+//        b = 0;
       }
       else {
-        r = 0;
-        g = 0;
-        b = 255*phase;
+        r = red(tertiaryColor)* phase;
+        g = green(tertiaryColor) * phase;
+        b = blue(tertiaryColor) * phase;
+
+
+//        r = 0;
+//        g = 0;
+//        b = 255*phase;
       }
       
       stroke(r,g,b);

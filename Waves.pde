@@ -46,7 +46,7 @@ class Wave {
   public Wave() {
     init();
 
-    g = createGraphics(displayWidth, displayHeight, P2D);
+    g = createGraphics(displayWidth, displayHeight);
   }
 
   public void init() {
@@ -54,7 +54,7 @@ class Wave {
     f = 2*PI/40;
     a = displayHeight/6 + random(displayHeight/4);
     y = displayHeight/16 + int(random(displayHeight - displayHeight/16));
-    s = PI/128 + random(PI/16);
+    s = PI/256 + random(PI/32);
 
     if (random(10)<5) { 
       s = -s;

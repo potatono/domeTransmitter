@@ -68,14 +68,20 @@ class WarpStar {
     //r = 252;
     //g = 23;
     //b = 218;
-    r = random(232,255);
-    g = random(230,255);
-    b = random(230,255);
+//    r = random(232,255);
+//    g = random(230,255);
+//    b = random(230,255);
+
+    r = red(primaryColor);
+    g = green(primaryColor);
+    b = blue(primaryColor);
+
     // scale brightness.
     float bright = random(.5,2);
     r = r*bright;
     g = g*bright;
     b = b*bright;
+
 
     stroke(r, g, b);
     point(x, y);
