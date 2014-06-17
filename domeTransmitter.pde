@@ -3,111 +3,64 @@ import java.lang.reflect.Method;
 import hypermedia.net.*;
 import java.io.*;
 
-// This should be 127.0.0.1, 58802
-String transmit_address = "127.0.0.1";
-int transmit_port       = 58082;
+// Most standard configuration stuff moved to Config class.
 
-// Display configuration
-int displayWidth = 8;
-int displayHeight = 160;
-
-boolean VERTICAL = false;
-int FRAMERATE = 25;
-int TYPICAL_MODE_TIME = 300;
-
-float bright = 1;  // Global brightness modifier
-
-Routine drop = new Seizure();
-Routine pong = new Pong();
-Routine backupRoutine = null;
-
-color[] palette = new color[] {
-  color(255,255,255),
-  color(170,11,5),
-  color(232,183,42),
-  color(75,166,0),
-  color(34,173,228),
-  color(136,8,103),
-  color(245,244,240),
-  color(130,21,14)
-};
-int currentColor = 0;
-color primaryColor = palette[0];
-color secondaryColor = palette[1];
-color tertiaryColor = palette[2];
-
-
-Routine[] enabledRoutines = new Routine[] {
+// TODO Move Routine configuraiton to Config class. Not straightfoward because static restrictions.
+public Routine[] enabledRoutines = new Routine[] {
+    new Waves(),
+    new WarpSpeedMrSulu(),
+    new Warp(),
+    new TrialOfZod(),
+    new Seizure(),
+    new RainbowColors(),
+    new RGBRoutine(),
+    new Pong(),
+    new Greetz(),
+    new FFTDemo(),
+    new DropTheBomb(),
+    new ColorDrop(),
+    new Chase(),
+    new Bursts(),
+    new Animator("anim-nyancat",1,.5,0,0,0),
     new TestPattern(true)
-//  new Warp(new Chase(), true, false, 0.5, 0.25),
-//  new Chase(),
-//  new Warp(new TestPattern(false), true, true, 0.5, 0.5),
-//  new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5),
-//  new Bursts(),
-//  new ColorDrop(),  
-//  new Warp(), 
-//  new Warp(new Bursts(), true, true, 0.5, 0.5),
-//  new Warp(new TrialOfZod(), true, false, 0.5, 0.25),
-//  new Warp(new Waves(), false, true, 0.5, 0.5),
-//  new Chase(),
-//  new Warp(null, true, false, 0.5, 0.5), 
-//  new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5),
-//  new WarpSpeedMrSulu()
-//  
- // new Waves(),
-  //new RainbowColors() 
-
-  /*
-  new Animator("anim-nyancat",1,.5,0,0,0),
-  new Bursts(), 
-  //  new Chase(),
-  new ColorDrop(), 
-  //  new DropTheBomb(),
-  new FFTDemo(), 
-  //  new Fire(),
-  //  new Greetz(),
-  new RGBRoutine(), 
-  new RainbowColors(), 
-  new Warp(null, true, false, 0.5, 0.5), 
-  new Warp(new WarpSpeedMrSulu(), false, true, 0.5, 0.5), 
-  new Waves(),
-  */
 };
-
-int w = 0;
-int x = displayWidth;
+ 
+PGraphics draw;
+Routine drop = new Seizure();
+Routine backupRoutine = null;
+int currentColor = 0;
+color primaryColor = Config.PALETTE[0];
+color secondaryColor = Config.PALETTE[1];
+color tertiaryColor = Config.PALETTE[2];
 PFont font;
 int ZOOM = 1;
-
 long modeFrameStart;
 int mode = 0;
-
-
-int direction = 1;
-int position = 0;
+//int direction = 1;
+//int position = 0;
 Routine currentRoutine = null;
-
 LEDDisplay sign;
-
 PGraphics fadeLayer;
 int fadeOutFrames = 0;
 int fadeInFrames = 0;
-
 WiiController controller;
 boolean wasButtonUp = false;
+PImage displayBuffer;
+boolean switching_mode = false; // if true, we already switched modes, so don't do it again this frame (don't freeze the display if someone holds the b button)
+int seizure_count = 0;  // Only let seizure mode work for a short time.
+
 
 void setup() {
-  //size(displayWidth, displayHeight);
-  size(800,600);
+  println("Display dimensions = " + Config.WIDTH + "x" + Config.HEIGHT);
+  size(int(Config.WIDTH*Config.ZOOM),int(Config.HEIGHT*Config.ZOOM),P2D);
+  draw = createGraphics(Config.WIDTH, Config.HEIGHT);
+  frameRate(Config.FRAMERATE);
 
-  frameRate(FRAMERATE);
-
-  sign = new LEDDisplay(this, displayWidth, displayHeight, true, transmit_address, transmit_port);
-  sign.setAddressingMode(LEDDisplay.ADDRESSING_HORIZONTAL_NORMAL);  
-  sign.setEnableGammaCorrection(true);
-
+  sign = new LEDDisplay(this, Config.WIDTH, Config.HEIGHT, true, Config.HOST, Config.PORT);
+  sign.setAddressingMode(Config.ADDRESSING_MODE);  
+  sign.setEnableGammaCorrection(Config.ENABLE_GAMMA);
+  
   setMode(0);  
-
   controller = new WiiController();
 
   for (Routine r : enabledRoutines) {
@@ -118,11 +71,11 @@ void setup() {
 }
 
 void setFadeLayer(int g) {
-  fadeLayer = createGraphics(displayWidth, displayHeight);
+  fadeLayer = createGraphics(Config.WIDTH, Config.HEIGHT);
   fadeLayer.beginDraw();
   fadeLayer.stroke(g);
   fadeLayer.fill(g);
-  fadeLayer.rect(0, 0, displayWidth, displayHeight);
+  fadeLayer.rect(0, 0, Config.WIDTH, Config.HEIGHT);
   fadeLayer.endDraw();
 }
 
@@ -140,7 +93,7 @@ void newMode() {
   int newMode = mode;
   String methodName;
 
-  fadeOutFrames = FRAMERATE;
+  fadeOutFrames = int(Config.FRAMERATE);
   setFadeLayer(240);
   if (enabledRoutines.length > 1) {
     while (newMode == mode) {
@@ -151,10 +104,8 @@ void newMode() {
   setMode(newMode);
 }
 
-boolean switching_mode = false; // if true, we already switched modes, so don't do it again this frame (don't freeze the display if someone holds the b button)
-int seizure_count = 0;  // Only let seizure mode work for a short time.
-
 void draw() {
+  draw.beginDraw();
   if (!controller.buttonB) {
     switching_mode = false;
   }
@@ -165,7 +116,6 @@ void draw() {
   else {
     seizure_count = 0;
   }
-
 
   // Jump into seizure mode
   if ((controller.buttonA || (keyPressed && key == 'a')) && currentRoutine != drop && seizure_count == 1) {
@@ -188,10 +138,10 @@ void draw() {
   else {
     if (fadeOutFrames > 0) {
       fadeOutFrames--;
-      blend(fadeLayer, 0, 0, displayWidth, displayHeight, 0, 0, displayWidth, displayHeight, MULTIPLY);
+      draw.blend(fadeLayer, 0, 0, Config.WIDTH, Config.HEIGHT, 0, 0, Config.WIDTH, Config.HEIGHT, MULTIPLY);
 
       if (fadeOutFrames == 0) {
-        fadeInFrames = FRAMERATE;
+        fadeInFrames = int(Config.FRAMERATE);
       }
     }
     else if (currentRoutine != null) {
@@ -211,8 +161,8 @@ void draw() {
     }
 
     if (fadeInFrames > 0) {
-      setFadeLayer(240 - fadeInFrames * (240 / FRAMERATE));
-      blend(fadeLayer, 0, 0, displayWidth, displayHeight, 0, 0, displayWidth, displayHeight, MULTIPLY);
+      setFadeLayer(240 - fadeInFrames * (240 / int(Config.FRAMERATE)));
+      draw.blend(fadeLayer, 0, 0, Config.WIDTH, Config.HEIGHT, 0, 0, Config.WIDTH, Config.HEIGHT, MULTIPLY);
       fadeInFrames--;
     }
 
@@ -221,23 +171,27 @@ void draw() {
       newMode();
     }
   }
-
-  sign.sendData();
+    
+  displayBuffer = draw.get(0,0,Config.WIDTH,Config.HEIGHT);
+  displayBuffer.loadPixels();
+  
+  sign.sendData(displayBuffer.pixels);
+  draw.endDraw();
+  image(draw,0,0,width,height);
 }
 
 color randomColor() {
-  return palette[int(random(palette.length))];
+  return Config.PALETTE[int(random(Config.PALETTE.length))];
 }
 
 void cycleColors() {
   currentColor++;
   
-  if (currentColor >= palette.length)
+  if (currentColor >= Config.PALETTE.length)
     currentColor = 0;
     
-  primaryColor = palette[currentColor];
-  secondaryColor = palette[currentColor+1 < palette.length ? currentColor+1 : currentColor-palette.length+1];
-  tertiaryColor = palette[currentColor+2 < palette.length ? currentColor+2 : currentColor-palette.length+2];
-  
+  primaryColor = Config.PALETTE[currentColor];
+  secondaryColor = Config.PALETTE[currentColor+1 < Config.PALETTE.length ? currentColor+1 : currentColor-Config.PALETTE.length+1];
+  tertiaryColor = Config.PALETTE[currentColor+2 < Config.PALETTE.length ? currentColor+2 : currentColor-Config.PALETTE.length+2];  
 }
 

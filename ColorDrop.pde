@@ -1,6 +1,6 @@
 class ColorDrop extends Routine {
   void draw() {
-    background(0);
+    draw.background(0);
   
     float frame_mult = 3;  // speed adjustment
   
@@ -10,15 +10,15 @@ class ColorDrop extends Routine {
     long frame = frameCount - modeFrameStart;
     
     
-    for(int row = 0; row < displayHeight; row++) {
-      float phase = sin((float)((row+frame*frame_mult)%displayHeight)/displayHeight*3.146 + random(0,.6));
+    for(int row = 0; row < Config.HEIGHT; row++) {
+      float phase = sin((float)((row+frame*frame_mult)%Config.HEIGHT)/Config.HEIGHT*3.146 + random(0,.6));
       
       float r = 0;
       float g = 0;
       float b = 0;
       
       
-      if((row+frame*frame_mult)%(3*displayHeight) < displayHeight) {
+      if((row+frame*frame_mult)%(3*Config.HEIGHT) < Config.HEIGHT) {
         r = red(primaryColor)* phase;
         g = green(primaryColor) * phase;
         b = blue(primaryColor) * phase;
@@ -26,7 +26,7 @@ class ColorDrop extends Routine {
 //        g = 0;
 //        b = 0;
       }
-      else if((row+frame*frame_mult)%(3*displayHeight) < displayHeight*2) {
+      else if((row+frame*frame_mult)%(3*Config.HEIGHT) < Config.HEIGHT*2) {
         r = red(secondaryColor)* phase;
         g = green(secondaryColor) * phase;
         b = blue(secondaryColor) * phase;
@@ -47,11 +47,11 @@ class ColorDrop extends Routine {
 //        b = 255*phase;
       }
       
-      stroke(r,g,b);
-      line(0, row, displayWidth, row);
+      draw.stroke(r,g,b);
+      draw.line(0, row, Config.WIDTH, row);
     }
     
-    if (frame > FRAMERATE*TYPICAL_MODE_TIME) {
+    if (frame >Config.FRAMERATE*Config.MODE_TIMEOUT) {
       newMode();
     }
   }

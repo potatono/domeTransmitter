@@ -5,7 +5,7 @@ import hypermedia.net.*;
  * Use Sketch..Add File and choose this file to copy it into your sketch.
  * 
  * void setup() {
- *   // Constructor takes this, width, height.
+ *   // Constructor takes this, Config.WIDTH, Config.HEIGHT.
  *   Dacwes dacwes = new Dacwes(this, 16, 16);
  * 
  *   // Change this depending on how the sign is configured.
@@ -140,32 +140,30 @@ public class LEDDisplay {
     udp.send(modeBuffer, address, port);
   }
 
-  public void sendData() {
-    PImage image = get();
+  public void sendData(color[] bufPixels) {
 
-    //    if (image.width != w || image.height != h) {
+    //    if (image.Config.WIDTH != w || image.Config.HEIGHT != h) {
     //      image.resize(w,h);
     //    }
 
-    image.loadPixels();
-    loadPixels();
+    //loadPixels();
 
     int r;
     int g;
     int b;
-    buffer[0] = 1;
+    buffer[0] = 0;
     for (int y=0; y<h; y++) {
       for (int x=0; x<w; x++) {
 
         if (isRGB) {
-          r = int(red(image.pixels[y*w+x]));
-          g = int(green(image.pixels[y*w+x]));
-          b = int(blue(image.pixels[y*w+x]));
+          r = int(red(bufPixels[y*w+x]));
+          g = int(green(bufPixels[y*w+x]));
+          b = int(blue(bufPixels[y*w+x]));
           
           if (enableGammaCorrection) {
-            r = (int)(Math.pow(r/256.0,this.gammaValue)*256*bright);
-            g = (int)(Math.pow(g/256.0,this.gammaValue)*256*bright);
-            b = (int)(Math.pow(b/256.0,this.gammaValue)*256*bright);
+            r = (int)(Math.pow(r/256.0,this.gammaValue)*256*Config.BRIGHTNESS);
+            g = (int)(Math.pow(g/256.0,this.gammaValue)*256*Config.BRIGHTNESS);
+            b = (int)(Math.pow(b/256.0,this.gammaValue)*256*Config.BRIGHTNESS);
           }
           
           buffer[(getAddress(x, y)*3)+1] = byte(r);
@@ -173,7 +171,7 @@ public class LEDDisplay {
           buffer[(getAddress(x, y)*3)+3] = byte(b);
         }
         else {
-          r = int(brightness(image.pixels[y*w+x]));
+          r = int(brightness(bufPixels[y*w+x]));
 
           if (enableGammaCorrection) {
             r = (int)(Math.pow(r/256.0,this.gammaValue)*256);
@@ -183,7 +181,7 @@ public class LEDDisplay {
         }
       }
     }
-    updatePixels();
+    //updatePixels();
     udp.send(buffer, address, port);
   }
 }

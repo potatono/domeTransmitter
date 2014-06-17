@@ -7,22 +7,21 @@ class TestPattern extends Routine {
   }
   
   void draw() {
-    background(0);
-    stroke(primaryColor);
-    
+    draw.background(0);
+    draw.stroke(primaryColor);
+        
     if (!vertical) {
-      line(o,0,o,height);
+      draw.line(o,0,o,Config.HEIGHT);
       o++;
-      if (o>width) o=0;
+      if (o>Config.WIDTH) o=0;
     }
     else {
       o++;
-      o = o % 4;
+      o = o % 16;
       
-      for (int i=o; i<height; i+=4)
-        line(0,i,width,i);
+      for (int i=o; i<Config.HEIGHT; i+=16)
+        draw.line(0,i,Config.WIDTH,i);
     }
-    
   }
 }
 
