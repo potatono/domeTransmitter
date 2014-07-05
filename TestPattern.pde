@@ -1,5 +1,5 @@
 class TestPattern extends Routine {
-  int o=0;
+  int o=-1;
   boolean vertical = false;
   
   public TestPattern(boolean vertical) {
@@ -9,6 +9,7 @@ class TestPattern extends Routine {
   void draw() {
     draw.background(0);
     draw.stroke(primaryColor);
+    //draw.stroke(color(0,0,255));
         
     if (!vertical) {
       draw.line(o,0,o,Config.HEIGHT);

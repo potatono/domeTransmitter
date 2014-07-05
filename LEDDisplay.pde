@@ -151,14 +151,25 @@ public class LEDDisplay {
     int r;
     int g;
     int b;
-    buffer[0] = 0;
-    for (int y=0; y<h; y++) {
-      for (int x=0; x<w; x++) {
-
+    int xd;
+    boolean swap;
+    
+    buffer[0] = 1;
+    for (int x=0; x<w; x++) {
+      if (Config.STRIP_LOOKUP[x] > -1) {
+        xd = Config.STRIP_LOOKUP[x];
+        swap = Config.SWAP_LOOKUP[x];
+      }
+      else {
+        xd = x;
+        swap = false;
+      }
+      
+      for (int y=0; y<h; y++) {        
         if (isRGB) {
           r = int(red(bufPixels[y*w+x]));
-          g = int(green(bufPixels[y*w+x]));
-          b = int(blue(bufPixels[y*w+x]));
+          g = int(swap ? blue(bufPixels[y*w+x]) : green(bufPixels[y*w+x]));
+          b = int(swap ? green(bufPixels[y*w+x]) : blue(bufPixels[y*w+x]));
           
           if (enableGammaCorrection) {
             r = (int)(Math.pow(r/256.0,this.gammaValue)*256*Config.BRIGHTNESS);
@@ -166,9 +177,9 @@ public class LEDDisplay {
             b = (int)(Math.pow(b/256.0,this.gammaValue)*256*Config.BRIGHTNESS);
           }
           
-          buffer[(getAddress(x, y)*3)+1] = byte(r);
-          buffer[(getAddress(x, y)*3)+2] = byte(g);
-          buffer[(getAddress(x, y)*3)+3] = byte(b);
+          buffer[(getAddress(xd, y)*3)+1] = byte(r);
+          buffer[(getAddress(xd, y)*3)+2] = byte(g);
+          buffer[(getAddress(xd, y)*3)+3] = byte(b);
         }
         else {
           r = int(brightness(bufPixels[y*w+x]));
@@ -177,7 +188,7 @@ public class LEDDisplay {
             r = (int)(Math.pow(r/256.0,this.gammaValue)*256);
           }
 
-          buffer[(getAddress(x, y)+1)] = byte(r);
+          buffer[(getAddress(xd, y)+1)] = byte(r);
         }
       }
     }

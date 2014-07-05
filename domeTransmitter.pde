@@ -7,6 +7,8 @@ import java.io.*;
 
 // TODO Move Routine configuraiton to Config class. Not straightfoward because static restrictions.
 public Routine[] enabledRoutines = new Routine[] {
+    //new Configulate(),
+    //new TestPattern(false),
     new Waves(),
     new WarpSpeedMrSulu(),
     new Warp(),
@@ -15,9 +17,9 @@ public Routine[] enabledRoutines = new Routine[] {
     new RainbowColors(),
     new RGBRoutine(),
     new Pong(),
-    new Greetz(),
-    new FFTDemo(),
-    new DropTheBomb(),
+    //new Greetz(),
+    //new FFTDemo(),
+    //new DropTheBomb(),
     new ColorDrop(),
     new Chase(),
     new Bursts(),
@@ -56,6 +58,7 @@ void setup() {
   draw = createGraphics(Config.WIDTH, Config.HEIGHT);
   frameRate(Config.FRAMERATE);
 
+  // TODO FIX LEDDisplay to work in old send 1 then packets mode..
   sign = new LEDDisplay(this, Config.WIDTH, Config.HEIGHT, true, Config.HOST, Config.PORT);
   sign.setAddressingMode(Config.ADDRESSING_MODE);  
   sign.setEnableGammaCorrection(Config.ENABLE_GAMMA);
