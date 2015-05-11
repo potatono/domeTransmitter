@@ -5,9 +5,9 @@ public static class Config {
   public static boolean ENABLE_GAMMA = true;
   public static int WIDTH = 40;
   public static int HEIGHT = 160;
-  public static float ZOOM = 4;
+  public static float ZOOM = 2;
   public static float BRIGHTNESS = 1.0;
-  public static float FRAMERATE = 30;
+  public static float FRAMERATE = 60;
   public static float MODE_TIMEOUT = 300;
   
   public static color[] PALETTE = new color[] {

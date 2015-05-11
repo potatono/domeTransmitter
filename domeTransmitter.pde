@@ -16,14 +16,10 @@ public Routine[] enabledRoutines = new Routine[] {
     new Seizure(),
     new RainbowColors(),
     new RGBRoutine(),
-    new Pong(),
-    //new Greetz(),
-    //new FFTDemo(),
     //new DropTheBomb(),
     new ColorDrop(),
     new Chase(),
     new Bursts(),
-    new Animator("anim-nyancat",1,.5,0,0,0),
     new TestPattern(true)
 };
  
@@ -50,7 +46,7 @@ boolean wasButtonUp = false;
 PImage displayBuffer;
 boolean switching_mode = false; // if true, we already switched modes, so don't do it again this frame (don't freeze the display if someone holds the b button)
 int seizure_count = 0;  // Only let seizure mode work for a short time.
-
+Routine webProxy = new WebProxy();
 
 void setup() {
   println("Display dimensions = " + Config.WIDTH + "x" + Config.HEIGHT);
@@ -71,6 +67,7 @@ void setup() {
   }  
 
   drop.setup(this);
+  webProxy.setup(this);
 }
 
 void setFadeLayer(int g) {
@@ -149,6 +146,8 @@ void draw() {
     }
     else if (currentRoutine != null) {
       currentRoutine.draw();
+      
+      webProxy.draw();
     }
     else {
       println("Current method is null");
