@@ -38,22 +38,26 @@ class SeasonsChange extends Routine {
   };
   color springGreen;
   color darkGreen;
-  color snow;
+  color snowColor;
   int mode;
   int springGrowthPoint;
   int flowerCount;
+  ArrayList<Snowflake> snowflakes;
+  int ySnowLimit;
 
   void setup(PApplet parent) {
     super.setup(parent);
     springGreen = color(0,255,127);
-    snow = color(248,248,255);
+    snowColor = color(248,248,255,255);
     reset();
   }
 
   void reset() {
-    mode = SPRING;
+    mode = WINTER;
     springGrowthPoint = Config.HEIGHT;
     flowerCount = 0;
+    snowflakes = new ArrayList<Snowflake>();
+    ySnowLimit = Config.HEIGHT;
   }
 
   void draw() {
@@ -64,7 +68,8 @@ class SeasonsChange extends Routine {
         draw.rect(0, springGrowthPoint, Config.WIDTH, Config.HEIGHT);
         springGrowthPoint--;
         if (springGrowthPoint <= 0) {
-          mode = DARKEN;
+          mode = SUMMER;
+//          mode = DARKEN;
           darkGreen = springGreen;
         } else {
           try { Thread.sleep(SPRING_DELAY); } catch (Exception e) { /* ignored */ }
@@ -120,16 +125,49 @@ class SeasonsChange extends Routine {
         draw.ellipse(fx, fy, fd, fd);
         flowerCount++;
         if (flowerCount >= MAX_FLOWERS) {
+          draw.background(0,0,20);
           mode = WINTER;
         }
         break;
       case WINTER:
         // snowflakes fall from the top of the dome and fill the strips
-        
-        mode = DONE;
+        for (int i = 0; i < Config.WIDTH; i++) {
+          Snowflake flake = new Snowflake(ySnowLimit, snowColor);
+          snowflakes.add(flake);
+          flake.draw();
+        }
+//        try { Thread.sleep(5); } catch (Exception e) { /* ignored */ }
+        boolean foundDone = false;
+        for (int i = 0; i < snowflakes.size(); i++) {
+          Snowflake flake = snowflakes.get(i);
+          flake.draw();
+          if (flake.done) {
+            foundDone = true;
+            snowflakes.remove(i);
+          }
+        }
+        draw.fill(snowColor);
+        draw.stroke(snowColor);
+        draw.rect(0, ySnowLimit, Config.WIDTH, Config.HEIGHT);
+        if (foundDone) {
+          ySnowLimit--;
+        }
+        if (ySnowLimit <= 0) {
+          mode = DONE;
+        }
         break;
-      default:
-        draw.background(0,0,20);
+      case DONE:
+        // fade out
+        float a = alpha(snowColor);
+        float sr = snowColor >> 16 & 0xFF;
+        float sg = snowColor >> 8 & 0xFF;
+        float sb = snowColor & 0xFF;
+        for (int i = floor(a); i > 0; i--) {
+          color faded = color(sr,sg,sb,i);
+          draw.fill(faded);
+          draw.stroke(faded);
+          draw.rect(0,0,Config.WIDTH, Config.HEIGHT);
+        }
         reset();
         if (frameCount - modeFrameStart > Config.FRAMERATE * Config.MODE_TIMEOUT) {
           newMode();
@@ -139,8 +177,48 @@ class SeasonsChange extends Routine {
   }
 
   class Snowflake {
-    
-  }
+    float x;
+    float y;
+    float yv;
+    float speed;
+    color c;
+    color blk;
+    boolean done;
+    int ylimit;
+
+    public Snowflake(int ylimit, color c) {
+      this.ylimit = ylimit;
+      this.c = c;
+      init();
+    }
+
+    public void init() {
+      blk = color(0,0,0);
+      x = random(Config.WIDTH);
+      y = 0;
+      float max_speed = 2;
+      float min_speed = 1;
+      yv = random(max_speed);
+      if (yv < min_speed) {
+        yv = min_speed;
+      }
+      done = false;
+    }
+
+    public void draw() {
+      // clear the previous pixel
+      draw.fill(blk);
+      draw.stroke(blk);
+      draw.point(x, y - 1);
+      // draw next pixel
+      draw.fill(c);
+      draw.stroke(c);
+      draw.point(x,y);
+      y += yv;
+      done = y >= ylimit;
+    }
+
+  } // class Snowflake
 
 } // class SeasonsChange
 
