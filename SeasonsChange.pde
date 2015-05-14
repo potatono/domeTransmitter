@@ -44,20 +44,23 @@ class SeasonsChange extends Routine {
   int flowerCount;
   ArrayList<Snowflake> snowflakes;
   int ySnowLimit;
+  color fadeout;
+  int pixelCount;
 
   void setup(PApplet parent) {
     super.setup(parent);
     springGreen = color(0,255,127);
-    snowColor = color(248,248,255,255);
+    snowColor = color(248,248,255);
     reset();
   }
 
   void reset() {
-    mode = WINTER;
+    mode = SPRING;
     springGrowthPoint = Config.HEIGHT;
     flowerCount = 0;
     snowflakes = new ArrayList<Snowflake>();
     ySnowLimit = Config.HEIGHT;
+    fadeout = snowColor;
   }
 
   void draw() {
@@ -113,19 +116,16 @@ class SeasonsChange extends Routine {
         }
         break;
       case FALL:
-        float fd = random(LEAF_MAX_DIAMETER);
-        if (fd < LEAF_MIN_DIAMETER) {
-          fd = LEAF_MIN_DIAMETER;
-        }
+        // make each strip mix between colors
+        // colorMode(HSB, 100);
         int fidx = floor(random(fallColors.length));
         int fx = floor(random(Config.WIDTH));
         int fy = floor(random(Config.HEIGHT));
         draw.stroke(fallColors[fidx]);
         draw.fill(fallColors[fidx]);
-        draw.ellipse(fx, fy, fd, fd);
-        flowerCount++;
-        if (flowerCount >= MAX_FLOWERS) {
-          draw.background(0,0,20);
+        draw.point(fx, fy);
+        pixelCount++;
+        if (pixelCount >= (Config.WIDTH * Config.HEIGHT)) {
           mode = WINTER;
         }
         break;
@@ -136,7 +136,6 @@ class SeasonsChange extends Routine {
           snowflakes.add(flake);
           flake.draw();
         }
-//        try { Thread.sleep(5); } catch (Exception e) { /* ignored */ }
         boolean foundDone = false;
         for (int i = 0; i < snowflakes.size(); i++) {
           Snowflake flake = snowflakes.get(i);
@@ -158,19 +157,18 @@ class SeasonsChange extends Routine {
         break;
       case DONE:
         // fade out
-        float a = alpha(snowColor);
-        float sr = snowColor >> 16 & 0xFF;
-        float sg = snowColor >> 8 & 0xFF;
-        float sb = snowColor & 0xFF;
-        for (int i = floor(a); i > 0; i--) {
-          color faded = color(sr,sg,sb,i);
-          draw.fill(faded);
-          draw.stroke(faded);
-          draw.rect(0,0,Config.WIDTH, Config.HEIGHT);
-        }
-        reset();
-        if (frameCount - modeFrameStart > Config.FRAMERATE * Config.MODE_TIMEOUT) {
-          newMode();
+        float sr = fadeout >> 16 & 0xFF;
+        float sg = fadeout >> 8 & 0xFF;
+        float sb = fadeout & 0xFF;
+        fadeout = color(sr-1,sg-1,sb-1);
+        draw.fill(fadeout);
+        draw.stroke(fadeout);
+        draw.rect(0,0,Config.WIDTH, Config.HEIGHT);
+        if (sb == 0) {
+          reset();
+          if (frameCount - modeFrameStart > Config.FRAMERATE * Config.MODE_TIMEOUT) {
+            newMode();
+          }
         }
         break;
     }
