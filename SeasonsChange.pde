@@ -18,7 +18,8 @@ class SeasonsChange extends Routine {
   private static final int FLOWER_MIN_DIAMETER = 3;
   private static final int LEAF_MAX_DIAMETER = 18;
   private static final int LEAF_MIN_DIAMETER = 8;
-  private static final int MAX_FLOWERS = 500;
+  private static final int MAX_FLOWERS = 400;
+  private static final int FALL_CYCLE = 500;
 
   private static final long SPRING_DELAY = 25; // ms
 
@@ -36,6 +37,7 @@ class SeasonsChange extends Routine {
     color(255,140,0), // dark orange
     color(255,215,0) // dark yellow / gold
   };
+  FallLeaf[] leaves = new FallLeaf[Config.WIDTH];
   color springGreen;
   color darkGreen;
   color snowColor;
@@ -46,11 +48,11 @@ class SeasonsChange extends Routine {
   int ySnowLimit;
   color fadeout;
   int pixelCount;
+  int fallCount;
 
   void setup(PApplet parent) {
     super.setup(parent);
     springGreen = color(0,255,127);
-    snowColor = color(248,248,255);
     reset();
   }
 
@@ -58,9 +60,15 @@ class SeasonsChange extends Routine {
     mode = SPRING;
     springGrowthPoint = Config.HEIGHT;
     flowerCount = 0;
+    fallCount = 0;
     snowflakes = new ArrayList<Snowflake>();
     ySnowLimit = Config.HEIGHT;
+    snowColor = color(200,200,200);
     fadeout = snowColor;
+    for (int i = 0; i < Config.WIDTH; i++) {
+      int idx = floor(random(fallColors.length));
+      leaves[i] = new FallLeaf(i, fallColors[idx]);
+    }
   }
 
   void draw() {
@@ -116,16 +124,23 @@ class SeasonsChange extends Routine {
         }
         break;
       case FALL:
-        // make each strip mix between colors
-        // colorMode(HSB, 100);
-        int fidx = floor(random(fallColors.length));
-        int fx = floor(random(Config.WIDTH));
-        int fy = floor(random(Config.HEIGHT));
-        draw.stroke(fallColors[fidx]);
-        draw.fill(fallColors[fidx]);
-        draw.point(fx, fy);
-        pixelCount++;
-        if (pixelCount >= (Config.WIDTH * Config.HEIGHT)) {
+        boolean fallDone = false;
+        int startedCount = 0;
+        for (int i = 0; i < leaves.length; i++) {
+          if (!leaves[i].started) {
+            leaves[i].draw();
+            break;
+          } else {
+            startedCount++;
+          }
+        }
+        for (int i = 0; i < startedCount; i++) {
+          if (leaves[i].started) {
+            leaves[i].draw();
+          }
+        }
+        fallCount++;
+        if (fallCount >= FALL_CYCLE) {
           mode = WINTER;
         }
         break;
@@ -172,7 +187,50 @@ class SeasonsChange extends Routine {
         }
         break;
     }
-  }
+  } // draw method
+
+  class FallLeaf {
+
+    int x;
+    color targetColor;
+    color currentColor;
+    boolean started;
+    
+    public FallLeaf(int x, color targetColor) {
+      this.x = x;
+      this.targetColor = targetColor;
+      currentColor = color(0,0,0);
+      started = false;
+    }
+
+    public void lighten() {
+        float tr = targetColor >> 16 & 0xFF;
+        float tg = targetColor >> 8 & 0xFF;
+        float tb = targetColor & 0xFF;
+        float cr = currentColor >> 16 & 0xFF;
+        float cg = currentColor >> 8 & 0xFF;
+        float cb = currentColor & 0xFF;
+        if (cr < tr) {
+          cr++;
+        }
+        if (cg < tg) {
+          cg++;
+        }
+        if (cb < tb) {
+          cb++;
+        }
+        currentColor = color(cr,cg,cb);
+    }
+
+    public void draw() {
+      started = true;
+      lighten();
+      draw.stroke(currentColor);
+      draw.fill(currentColor);
+      draw.line(x, 0, x, Config.HEIGHT);
+    }
+
+  } // cass FallLeaf
 
   class Snowflake {
     float x;
