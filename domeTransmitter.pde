@@ -8,18 +8,18 @@ import java.io.*;
 // TODO Move Routine configuraiton to Config class. Not straightfoward because static restrictions.
 public Routine[] enabledRoutines = new Routine[] {
     //new Configulate(),
-    //new TestPattern(false),
-    new Waves(),
-    new WarpSpeedMrSulu(),
-    new Warp(),
-    new TrialOfZod(),
-    new Seizure(),
-    new RainbowColors(),
-    new RGBRoutine(),
-    //new DropTheBomb(),
-    new ColorDrop(),
-    new Chase(),
-    new Bursts(),
+//    new D15TestPattern(),
+//    new Waves(),
+//    new WarpSpeedMrSulu(),
+//    new Warp(),
+//    new TrialOfZod(),
+//    new Seizure(),
+//    new RainbowColors(),
+//    new RGBRoutine(),
+//    //new DropTheBomb(),
+//    new ColorDrop(),
+//    new Chase(),
+//    new Bursts(),
     new TestPattern(true)
 };
  
@@ -46,11 +46,12 @@ boolean wasButtonUp = false;
 PImage displayBuffer;
 boolean switching_mode = false; // if true, we already switched modes, so don't do it again this frame (don't freeze the display if someone holds the b button)
 int seizure_count = 0;  // Only let seizure mode work for a short time.
-Routine webProxy = new WebProxy();
+//Routine webProxy = new WebProxy();
 
 void setup() {
   println("Display dimensions = " + Config.WIDTH + "x" + Config.HEIGHT);
-  size(int(Config.WIDTH*Config.ZOOM),int(Config.HEIGHT*Config.ZOOM),P2D);
+  //size(int(Config.WIDTH*Config.ZOOM),int(Config.HEIGHT*Config.ZOOM),P2D);
+  size(160, 640, P3D);
   draw = createGraphics(Config.WIDTH, Config.HEIGHT);
   frameRate(Config.FRAMERATE);
 
@@ -67,7 +68,7 @@ void setup() {
   }  
 
   drop.setup(this);
-  webProxy.setup(this);
+  //webProxy.setup(this);
 }
 
 void setFadeLayer(int g) {
@@ -147,7 +148,7 @@ void draw() {
     else if (currentRoutine != null) {
       currentRoutine.draw();
       
-      webProxy.draw();
+      //webProxy.draw();
     }
     else {
       println("Current method is null");
@@ -196,4 +197,3 @@ void cycleColors() {
   secondaryColor = Config.PALETTE[currentColor+1 < Config.PALETTE.length ? currentColor+1 : currentColor-Config.PALETTE.length+1];
   tertiaryColor = Config.PALETTE[currentColor+2 < Config.PALETTE.length ? currentColor+2 : currentColor-Config.PALETTE.length+2];  
 }
-

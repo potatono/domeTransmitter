@@ -10,6 +10,7 @@ class TestPattern extends Routine {
     draw.background(0);
     draw.stroke(primaryColor);
     //draw.stroke(color(0,0,255));
+    draw.strokeWeight(1);
         
     if (!vertical) {
       draw.line(o,0,o,Config.HEIGHT);
@@ -18,9 +19,9 @@ class TestPattern extends Routine {
     }
     else {
       o++;
-      o = o % 16;
+      o = o % 32;
       
-      for (int i=o; i<Config.HEIGHT; i+=16)
+      for (int i=o; i<Config.HEIGHT; i+=32)
         draw.line(0,i,Config.WIDTH,i);
     }
   }

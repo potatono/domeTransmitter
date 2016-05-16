@@ -5,9 +5,9 @@ public static class Config {
   public static boolean ENABLE_GAMMA = true;
   public static int WIDTH = 40;
   public static int HEIGHT = 160;
-  public static float ZOOM = 2;
+  public static float ZOOM = 4;
   public static float BRIGHTNESS = 1.0;
-  public static float FRAMERATE = 60;
+  public static float FRAMERATE = 30;
   public static float MODE_TIMEOUT = 300;
   
   public static color[] PALETTE = new color[] {
@@ -22,21 +22,6 @@ public static class Config {
   };
 
 public static int[] STRIP_LOOKUP = new int[] {
-    18, 17, 16, 20, 21, 22, 23, 27, 
-    25, 26, 24, 28, 30, 29, 9, 11, 
-    8, 10, 12, 13, 15, 14, 1, 0, 
-    3, 2, 5, 4, 6, 7, 33, 32, 
-    35, 34, 38, 36, 39, 37, 31, 19
-  };
-  public static boolean[] SWAP_LOOKUP = new boolean[] {
-    false, false, false, false, false, false, false, false, 
-    false, false, false, true, true, true, true, true, 
-    false, false, true, true, true, true, false, false, 
-    false, false, false, false, false, false, false, false, 
-    false, false, false, false, false, false, false, false
-  };
-/*
-public static int[] STRIP_LOOKUP = new int[] {
     -1, -1, -1, -1, -1, -1, -1, -1, 
     -1, -1, -1, -1, -1, -1, -1, -1, 
     -1, -1, -1, -1, -1, -1, -1, -1, 
@@ -45,12 +30,11 @@ public static int[] STRIP_LOOKUP = new int[] {
   };
   public static boolean[] SWAP_LOOKUP = new boolean[] {
     false, false, false, false, false, false, false, false, 
-    false, false, false, true, true, true, true, true, 
-    false, false, true, true, true, true, false, false, 
+    false, false, false, false, false, false, false, false, 
+    false, false, false, false, false, false, false, false, 
     false, false, false, false, false, false, false, false, 
     false, false, false, false, false, false, false, false
   };
-*/
 
   public static int col(int r, int g, int b, int a) {
     return (a<<24) | (r<<16) | (g<<8) | b;
